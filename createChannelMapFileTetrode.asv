@@ -1,7 +1,4 @@
 function createChannelMapFileTetrode(SubjCoordx, SubjCoordy, OutputPath)
-if nargin<3
-    OutputPath = 'C:\Users\Dell Workstation\Documents\GitHub\Kilosort2\configFiles';
-end
 if nargin==0
     % Cooper's coordinates
     SubjCoordx = [3600 3200 3200 3600];
@@ -20,7 +17,7 @@ kcoords   = [1 2 3 4].*ones(Nchannels/4,1); % grouping of channels (i.e. tetrode
 kcoords = kcoords(:);
 
 fs = 31250; % sampling frequency of Deuteron
-save(fullfile(OutputPath, 'Tetrodex4Co_kilosortChanMap.mat'), ...
+save('/Users/elie/Documents/CODE/Kilosort2/configFiles/Tetrodex4Co_kilosortChanMap.mat', ...
     'chanMap','connected', 'xcoords', 'ycoords', 'kcoords', 'chanMap0ind', 'fs')
 
 %% Map for 1 tetrode
@@ -38,7 +35,7 @@ kcoords   = ones(Nchannels,1); % grouping of channels (i.e. tetrode groups)
 
 fs = 31250; % sampling frequency (Hz) of Deuteron
 
-save(fullfile(OutputPath,'Tetrodex1_kilosortChanMap.mat'), ...
+save('/Users/elie/Documents/CODE/Kilosort2/configFiles/Tetrodex1_kilosortChanMap.mat', ...
     'chanMap','connected', 'xcoords', 'ycoords', 'kcoords', 'chanMap0ind', 'fs')
 %%
 
