@@ -30,10 +30,10 @@ connected = true(Nchannels, 1);
 chanMap   = 1:Nchannels;
 chanMap0ind = chanMap - 1;
 
-xcoords   = repmat([1 2 3 4]', 1, Nchannels/4);
-xcoords   = xcoords(:);
-ycoords   = repmat(1:Nchannels/4, 4, 1);
+ycoords   = repmat([1 2 3 4]', 1, Nchannels/4);
 ycoords   = ycoords(:);
+xcoords   = repmat(1:Nchannels/4, 4, 1);
+xcoords   = xcoords(:);
 kcoords   = ones(Nchannels,1); % grouping of channels (i.e. tetrode groups)
 
 fs = 31250; % sampling frequency (Hz) of Deuteron
