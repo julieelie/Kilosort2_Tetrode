@@ -4,8 +4,31 @@ if nargin<3
 end
 if nargin==0
     % Cooper's coordinates
-    SubjCoordx = [3600 3200 3200 3600];
-    SubjCoordy = [11000 10700 10300 10700];
+    SubjCoordx = [3600 3200 3200 3600]-3200;
+    SubjCoordy = [11000 10700 10300 10700]-10300;
+end
+%  create a channel map file for 4 tetrode
+Nchannels = 16;
+connected = true(Nchannels, 1);
+chanMap   = 1:Nchannels; % a row vector)
+chanMap0ind = chanMap - 1; % a row vector
+xcoords   = repmat(10*[1 2 1 2]', 1, Nchannels/4) + SubjCoordx.*ones(4,1);
+xcoords   = xcoords(:); % a column vector
+ycoords   = repmat(10*[2 2 1 1]', 1, Nchannels/4) + SubjCoordy.*ones(4,1);
+ycoords   = ycoords(:); % a column vector
+kcoords   = [1 2 3 4].*ones(Nchannels/4,1); % grouping of channels (i.e. tetrode groups), column vector
+kcoords = kcoords(:);
+
+fs = 31250; % sampling frequency of Deuteron
+save(fullfile(OutputPath, 'Tetrodex4Co_kilosortChanMap.mat'), ...
+    'chanMap','connected', 'xcoords', 'ycoords', 'kcoords', 'chanMap0ind', 'fs')
+
+
+%% General map
+if nargin==0
+    % General coordinates
+    SubjCoordx = [0 0 0 0];
+    SubjCoordy = [1000 2000 3000 4000];
 end
 %  create a channel map file for 4 tetrode
 Nchannels = 16;
@@ -14,13 +37,13 @@ chanMap   = 1:Nchannels; % a row vector)
 chanMap0ind = chanMap - 1; % a row vector
 xcoords   = repmat([1 2 3 4]', 1, Nchannels/4) + SubjCoordx.*ones(4,1);
 xcoords   = xcoords(:); % a column vector
-ycoords   = repmat([4 3 2 1]', 1, Nchannels/4) + SubjCoordy.*ones(4,1);
+ycoords   = repmat(zeros(4,1)', 1, Nchannels/4) + SubjCoordy.*ones(4,1);
 ycoords   = ycoords(:); % a column vector
 kcoords   = [1 2 3 4].*ones(Nchannels/4,1); % grouping of channels (i.e. tetrode groups), column vector
 kcoords = kcoords(:);
 
 fs = 31250; % sampling frequency of Deuteron
-save(fullfile(OutputPath, 'Tetrodex4Co_kilosortChanMap.mat'), ...
+save(fullfile(OutputPath, 'Tetrodex4Default_kilosortChanMap.mat'), ...
     'chanMap','connected', 'xcoords', 'ycoords', 'kcoords', 'chanMap0ind', 'fs')
 
 %% Map for 1 tetrode
