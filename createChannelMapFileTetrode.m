@@ -1,6 +1,6 @@
 function createChannelMapFileTetrode(SubjCoordx, SubjCoordy, OutputPath)
 if nargin<3
-    OutputPath = 'C:\Users\Dell Workstation\Documents\GitHub\Kilosort2\configFiles';
+    OutputPath = 'C:\Users\Dell Workstation\Documents\GitHub\Kilosort2_Tetrode\configFiles';
 end
 if nargin==0
     % Cooper's coordinates
