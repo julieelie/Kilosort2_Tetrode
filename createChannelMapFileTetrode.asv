@@ -28,7 +28,7 @@ save(fullfile(OutputPath, 'Tetrodex4Co_kilosortChanMap.mat'), ...
 if nargin==0
     % General coordinates
     SubjCoordx = [0 0 0 0];
-    SubjCoordy = [100 200 300 400];
+    SubjCoordy = [1000 2000 3000 4000];
 end
 %  create a channel map file for 4 tetrode
 Nchannels = 16;
