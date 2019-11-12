@@ -1,17 +1,23 @@
+function master_kilosort(Server_folder, rootZ,SaveMat)
 %% you need to change most of the paths in this block
 
 addpath(genpath('C:\Users\Dell Workstation\Documents\GitHub\KiloSort2')) % path to kilosort folder
 addpath('C:\Users\Dell Workstation\Documents\GitHub\npy-matlab') % for converting to Phy
-rootZ = 'C:\Users\Dell Workstation\Documents\DataKilosort2'; % the raw data binary file is in this folder
-rootH = 'C:\Users\Dell Workstation\Documents\DataKilosort2\Temp'; % path to temporary binary file (same size as data, should be on fast SSD)
+if nargin<2
+    rootZ = 'C:\Users\Dell Workstation\Documents\DataKilosort2'; % the raw data binary file is in this folder
+end
+if nargin<3
+    SaveMat = 0;
+end
+rootH = fullfile(rootZ,'Temp'); % path to temporary binary file (same size as data, should be on fast SSD)
 pathToYourConfigFile = 'C:\Users\Dell Workstation\Documents\GitHub\KiloSort2_Tetrode\configFiles'; % take from Github folder and put it somewhere else (together with the master_file)
 chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
 
 
 ops.trange = [0 Inf]; % time range to sort
-ops.NchanTOT    = 384; % total number of channels in your recording
+ops.NchanTOT    = 16; % total number of channels in your recording
 
-run(fullfile(pathToYourConfigFile, 'configFile384.m'))
+run(fullfile(pathToYourConfigFile, 'configFile16.m'))
 ops.fproc       = fullfile(rootH, 'temp_wh.dat'); % proc file on a fast SSD
 ops.chanMap = fullfile(pathToYourConfigFile, chanMapFile);
 
@@ -21,7 +27,7 @@ fprintf('Looking for data inside %s \n', rootZ)
 % is there a channel map file in this folder?
 fs = dir(fullfile(rootZ, 'chan*.mat'));
 if ~isempty(fs)
-    ops.chanMap = fullfile(rootZ, fs(1).name);
+    fs = fullfile(rootZ, fs(1).name);
 end
 
 % find the binary file
@@ -58,13 +64,17 @@ fprintf('found %d good units \n', sum(rez.good>0))
 fprintf('Saving results to Phy  \n')
 rezToPhy(rez, rootZ);
 
+%% Transfer data back on the server
+
 %% if you want to save the results to a Matlab file...
-
-% discard features in final rez file (too slow to save)
-rez.cProj = [];
-rez.cProjPC = [];
-
-% save final results as rez2
-fprintf('Saving final results in rez2  \n')
-fname = fullfile(rootZ, 'rez2.mat');
-save(fname, 'rez', '-v7.3');
+if SaveMat
+    % discard features in final rez file (too slow to save)
+    rez.cProj = [];
+    rez.cProjPC = [];
+    
+    % save final results as rez2
+    fprintf('Saving final results in rez2  \n')
+    fname = fullfile(rootZ, 'rez2.mat');
+    save(fname, 'rez', '-v7.3');
+end
+end
