@@ -1,4 +1,4 @@
-function master_kilosort(Server_folder, rootZ,SaveMat)
+function mymaster_kilosort(Server_folder, rootZ,SaveMat)
 %% you need to change most of the paths in this block
 
 addpath(genpath('C:\Users\Dell Workstation\Documents\GitHub\KiloSort2')) % path to kilosort folder
@@ -19,6 +19,9 @@ ops.NchanTOT    = 16; % total number of channels in your recording
 
 run(fullfile(pathToYourConfigFile, 'configFile16.m'))
 ops.fproc       = fullfile(rootH, 'temp_wh.dat'); % proc file on a fast SSD
+if ~exist(rootH, 'dir')
+    mkdir(rootH)
+end
 ops.chanMap = fullfile(pathToYourConfigFile, chanMapFile);
 
 %% this block runs all the steps of the algorithm
@@ -73,7 +76,9 @@ mkdir(Server_folderSS)
 if ~s
     m %#ok<NOPRT>
     e %#ok<NOPRT>
-    error('File transfer did not occur correctly from %s to %s\n', rootZ, Server_folder);
+    error('File transfer did not occur correctly from %s to %s\n', rootZ, Server_folderSS);
+else
+    fprintf(1, 'All Done!\n')
 end
 
 %% if you want to save the results to a Matlab file...
