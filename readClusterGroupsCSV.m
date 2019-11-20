@@ -13,7 +13,7 @@ fclose(fid);
 
 cids = cellfun(@str2num, C{1}(2:end), 'uni', false);
 ise = cellfun(@isempty, cids);
-cids = [cids{~ise}];
+cids = [cids{~ise}] + 1; % change zero-indexed to 1-indexed
 
 isUns = cellfun(@(x)strcmp(x,'unsorted'),C{2}(2:end));
 isMUA = cellfun(@(x)strcmp(x,'mua'),C{2}(2:end));
@@ -23,3 +23,4 @@ cgs = zeros(size(cids));
 cgs(isMUA) = 1;
 cgs(isGood) = 2;
 cgs(isUns) = 3;
+end
