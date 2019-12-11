@@ -72,11 +72,16 @@ rezToPhy(rez, rootZ);
 fprintf(1,'Transferring data from the local computer %s\n to the server %s\n', rootZ, Server_folder);
 Server_folderSS = fullfile(Server_folder, 'spikesorted');
 mkdir(Server_folderSS)
-[s,m,e]=copyfile(fullfile( rootZ, '*'), Server_folderSS, 'f');
-if ~s
+[s(1),m,e]=copyfile(fullfile( rootZ, '*.npy'), Server_folderSS, 'f');
+[s(2),m,e]=copyfile(fullfile( rootZ, '*.bin'), Server_folderSS, 'f');
+[s(3),m,e]=copyfile(fullfile( rootZ, '*.tsv'), Server_folderSS, 'f');
+[s(4),m,e]=copyfile(fullfile( rootZ, '*.mat'), Server_folderSS, 'f');
+[s(5),m,e]=copyfile(fullfile( rootZ, '*.py'), Server_folderSS, 'f');
+if any(~s)
     m %#ok<NOPRT>
     e %#ok<NOPRT>
     error('File transfer did not occur correctly from %s to %s\n', rootZ, Server_folderSS);
+    s
 else
     fprintf(1, 'All Done!\n')
 end
