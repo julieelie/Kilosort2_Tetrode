@@ -1,4 +1,4 @@
-ops.chanMap             = 'C:\Users\Dell Workstation\Documents\GitHub\KiloSort2_Tetrode\configFiles\Tetrodex4Default_kilosortChanMap.mat';
+% ops.chanMap             = 'C:\Users\Dell Workstation\Documents\GitHub\KiloSort2_Tetrode\configFiles\Tetrodex4Default_kilosortChanMap.mat';
 % ops.chanMap = 1:ops.Nchan; % treated as linear probe if no chanMap file
 
 % sample rate

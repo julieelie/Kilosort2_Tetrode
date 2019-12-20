@@ -11,11 +11,11 @@ if nargin<3
 end
 rootH = fullfile(rootZ,'Temp'); % path to temporary binary file (same size as data, should be on fast SSD)
 pathToYourConfigFile = 'C:\Users\Dell Workstation\Documents\GitHub\KiloSort2_Tetrode\configFiles'; % take from Github folder and put it somewhere else (together with the master_file)
-chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
+% chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
+chanMapFile = 'Tetrodex4Co_kilosortChanMap.mat';
 
 
 ops.trange = [0 Inf]; % time range to sort
-ops.NchanTOT    = 16; % total number of channels in your recording
 
 run(fullfile(pathToYourConfigFile, 'configFile16.m'))
 ops.fproc       = fullfile(rootH, 'temp_wh.dat'); % proc file on a fast SSD
@@ -27,15 +27,13 @@ ops.chanMap = fullfile(pathToYourConfigFile, chanMapFile);
 %% this block runs all the steps of the algorithm
 fprintf('Looking for data inside %s \n', rootZ)
 
-% is there a channel map file in this folder?
-fs = dir(fullfile(rootZ, 'chan*.mat'));
-if ~isempty(fs)
-    fs = fullfile(rootZ, fs(1).name);
-end
 
 % find the binary file
 fs          = [dir(fullfile(rootZ, '*.bin')) dir(fullfile(rootZ, '*.dat'))];
 ops.fbinary = fullfile(rootZ, fs(1).name);
+
+% Calculate the nmuber of channels in the recording
+ops.NchanTOT = length(strfind(fs(1).name,'_'))-2;
 
 % preprocess data to create temp_wh.dat
 rez = preprocessDataSub(ops);
