@@ -11,8 +11,8 @@ if nargin<3
 end
 rootH = fullfile(rootZ,'Temp'); % path to temporary binary file (same size as data, should be on fast SSD)
 pathToYourConfigFile = 'C:\Users\Dell Workstation\Documents\GitHub\KiloSort2_Tetrode\configFiles'; % take from Github folder and put it somewhere else (together with the master_file)
-% chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
-chanMapFile = 'Tetrodex4Co_kilosortChanMap.mat';
+chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
+% chanMapFile = 'Tetrodex4Co_kilosortChanMap.mat';
 
 
 ops.trange = [0 Inf]; % time range to sort
