@@ -39,7 +39,7 @@ ops.nskip           = 25;  % how many batches to skip for determining spike PCs
 
 ops.GPU                 = 1; % has to be 1, no CPU version yet, sorry
 % ops.Nfilt               = 1024; % max number of clusters
-ops.nfilt_factor        = 10; % max number of clusters per good channel (even temporary ones)
+ops.nfilt_factor        = 4; % max number of clusters per good channel (even temporary ones)Dflt:4
 ops.ntbuff              = 64;    % samples of symmetrical buffer for whitening and spike detection
 ops.NT                  = 2*64*1024+ ops.ntbuff; % must be multiple of 32 + ntbuff. This is the batch size (try decreasing if out of memory).Was 64*1024+ ops.ntbuff corresponding to roughly 2s, increasing to 6s for better drift correction (enough spikes)
 ops.whiteningRange      = 4; % number of channels to use for whitening each channel, used to be 32, but the code in get_whitening_matrix takes min(Nchannels,ops.whiteningRange). Then whitening local takes the Nrange closest neighbors including the target channel (neighbor calculated as euuclidian distance from channel map)
