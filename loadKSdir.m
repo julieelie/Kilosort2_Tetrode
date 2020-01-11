@@ -16,7 +16,6 @@ if ~isfield(params, 'loadPCs')
 end
 
 % load spike data
-
 spikeStruct = loadParamsPy(fullfile(ksDir, 'params.py'));
 
 ss = readNPY(fullfile(ksDir, 'spike_times.npy')); % detected events position is # of samples int16
@@ -48,6 +47,11 @@ if exist(fullfile(ksDir, 'cluster_group.tsv'),'file')
 end 
 if ~isempty(cgsFile)
     [cids, cgs] = readClusterGroupsCSV(cgsFile);% cids: cluster ID number; cgs: cluster group or label (noise = 0, mua = 1, good =2, unsorted =3)
+    % Some of the new clusters that stayed unlabelled are missing from the
+    % CSV file for some reason. They are marked here as unsorted
+    Unlabelled = setdiff(unique(clu), cids);
+    cids = [cids Unlabelled'];
+    cgs = [cgs 3*ones(1,length(Unlabelled))];
 
     if params.excludeNoise
         noiseClusters = cids(cgs==0);
