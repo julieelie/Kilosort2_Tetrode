@@ -11,8 +11,7 @@ if nargin<3
 end
 rootH = fullfile(rootZ,'Temp'); % path to temporary binary file (same size as data, should be on fast SSD)
 pathToYourConfigFile = 'C:\Users\Dell Workstation\Documents\GitHub\KiloSort2_Tetrode\configFiles'; % take from Github folder and put it somewhere else (together with the master_file)
-% chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
-chanMapFile = 'Tetrodex4Co_kilosortChanMap.mat';
+
 
 
 ops.trange = [0 Inf]; % time range to sort
@@ -22,7 +21,7 @@ ops.fproc       = fullfile(rootH, 'temp_wh.dat'); % proc file on a fast SSD
 if ~exist(rootH, 'dir')
     mkdir(rootH)
 end
-ops.chanMap = fullfile(pathToYourConfigFile, chanMapFile);
+
 
 %% this block runs all the steps of the algorithm
 fprintf('Looking for data inside %s \n', rootZ)
@@ -31,15 +30,49 @@ fprintf('Looking for data inside %s \n', rootZ)
 % find the binary file
 fs          = [dir(fullfile(rootZ, '*.bin')) dir(fullfile(rootZ, '*.dat'))];
 ops.fbinary = fullfile(rootZ, fs(1).name);
+BATID = fs(1).name(1:5);
+Date = fs(1).name(7:14);
 
 % Calculate the nmuber of channels in the recording
 ops.NchanTOT = length(strfind(fs(1).name,'_'))-2;
 
-% preprocess data to create temp_wh.dat
-rez = preprocessDataSub(ops);
+% Find the good map for tetrodes XXX ALSO SOMETHING YOU WANT TO CHECK FOR
+% YOUR DATA!!!XXX
+if ops.NchanTOT==16
+    chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
+elseif ops.NchanTOT==15 && strcmp(fs(1).name(1:5), '11689') % This is Hodor, who missed channel 11 (12th channel)
+    chanMapFile = 'TetrodexHo_kilosortChanMap.mat';
+else
+    chanMapFile = input('Indicate the name of the matfile for your channel map in C:\Users\Dell Workstation\Documents\GitHub\Kilosort2_Tetrode\configFiles:\n','s');
+end
+ops.chanMap = fullfile(pathToYourConfigFile, chanMapFile);
 
-% time-reordering as a function of drift
-rez = clusterSingleBatches(rez);
+try
+    % preprocess data to create temp_wh.dat
+    rez = preprocessDataSub(ops);
+    
+    % plot the whitening matrix
+    figure();imagesc(rez.Wrot)
+    colorbar()
+    title(sprintf('Whitening matrix %s %s', BATID, Date))
+    saveas(gcf, fullfile(rootZ,'WhiteningMatrix'),'epsc')
+    
+    % time-reordering as a function of drift
+    rez = clusterSingleBatches(rez);
+catch % lower the threshold for spike detection !
+    ops.spkTh           = -5;      % spike threshold in standard deviations (-6)
+    % preprocess data to create temp_wh.dat
+    rez = preprocessDataSub(ops);
+    
+    % plot the whitening matrix
+    figure();imagesc(rez.Wrot)
+    colorbar()
+    title(sprintf('Whitening matrix %s %s', BATID, Date))
+    saveas(gcf, fullfile(rootZ,'WhiteningMatrix'),'epsc')
+    
+    % time-reordering as a function of drift
+    rez = clusterSingleBatches(rez);
+end
 
 % saving here is a good idea, because the rest can be resumed after loading rez
 save(fullfile(rootZ, 'rez.mat'), 'rez', '-v7.3');
@@ -69,12 +102,16 @@ rezToPhy(rez, rootZ);
 % Bring data back on the server
 fprintf(1,'Transferring data from the local computer %s\n to the server %s\n', rootZ, Server_folder);
 Server_folderSS = fullfile(Server_folder, 'spikesorted');
+if exist(Server_folderSS, 'dir')
+    rmdir(Server_folderSS, 's')
+end
 mkdir(Server_folderSS)
 [s(1),m,e]=copyfile(fullfile( rootZ, '*.npy'), Server_folderSS, 'f');
 [s(2),m,e]=copyfile(fullfile( rootZ, '*.bin'), Server_folderSS, 'f');
 [s(3),m,e]=copyfile(fullfile( rootZ, '*.tsv'), Server_folderSS, 'f');
 [s(4),m,e]=copyfile(fullfile( rootZ, '*.mat'), Server_folderSS, 'f');
 [s(5),m,e]=copyfile(fullfile( rootZ, '*.py'), Server_folderSS, 'f');
+[s(6),m,e]=copyfile(fullfile( rootZ, '*.eps'), Server_folderSS, 'f');
 if any(~s)
     m %#ok<NOPRT>
     e %#ok<NOPRT>

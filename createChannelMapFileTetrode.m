@@ -18,7 +18,7 @@ ycoords   = repmat(10*[2 2 1 1]', 1, Nchannels/4) + SubjCoordy.*ones(4,1);
 ycoords   = ycoords(:); % a column vector
 kcoords   = [1 2 3 4].*ones(Nchannels/4,1); % grouping of channels (i.e. tetrode groups), column vector
 kcoords = kcoords(:);
-% Cooper has no channel 11 (12th channel)
+% Hodor has no channel 11 (12th channel)
 xcoords(12) =[];
 ycoords(12) =[];
 kcoords(12) =[];
@@ -28,7 +28,7 @@ chanMap   = 1:(Nchannels-1); % a row vector)
 chanMap0ind = chanMap - 1; % a row vector
 
 fs = 31250; % sampling frequency of Deuteron
-save(fullfile(OutputPath, 'Tetrodex4Co_kilosortChanMap.mat'), ...
+save(fullfile(OutputPath, 'Tetrodex4Ho_kilosortChanMap.mat'), ...
     'chanMap','connected', 'xcoords', 'ycoords', 'kcoords', 'chanMap0ind', 'fs')
 
 
