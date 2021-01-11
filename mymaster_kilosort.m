@@ -1,7 +1,7 @@
 function mymaster_kilosort(Server_folder, rootZ,SaveMat)
 %% you need to change most of the paths in this block
 
-addpath(genpath('C:\Users\Dell Workstation\Documents\GitHub\KiloSort2')) % path to kilosort folder
+addpath(genpath('C:\Users\Dell Workstation\Documents\GitHub\KiloSort2_Tetrode')) % path to kilosort2 folder
 addpath('C:\Users\Dell Workstation\Documents\GitHub\npy-matlab') % for converting to Phy
 if nargin<2
     rootZ = 'C:\Users\Dell Workstation\Documents\DataKilosort2'; % the raw data binary file is in this folder
@@ -26,7 +26,6 @@ end
 %% this block runs all the steps of the algorithm
 fprintf('Looking for data inside %s \n', rootZ)
 
-
 % find the binary file
 fs          = [dir(fullfile(rootZ, '*.bin')) dir(fullfile(rootZ, '*.dat'))];
 ops.fbinary = fullfile(rootZ, fs(1).name);
@@ -41,7 +40,7 @@ ops.NchanTOT = length(strfind(fs(1).name,'_'))-2;
 if ops.NchanTOT==16
     chanMapFile = 'Tetrodex4Default_kilosortChanMap.mat';
 elseif ops.NchanTOT==15 && strcmp(fs(1).name(1:5), '11689') % This is Hodor, who missed channel 11 (12th channel)
-    chanMapFile = 'TetrodexHo_kilosortChanMap.mat';
+    chanMapFile = 'Tetrodex4Ho_kilosortChanMap.mat';
 else
     chanMapFile = input('Indicate the name of the matfile for your channel map in C:\Users\Dell Workstation\Documents\GitHub\Kilosort2_Tetrode\configFiles:\n','s');
 end
@@ -56,9 +55,6 @@ try
     colorbar()
     title(sprintf('Whitening matrix %s %s', BATID, Date))
     saveas(gcf, fullfile(rootZ,'WhiteningMatrix'),'epsc')
-    
-    % time-reordering as a function of drift
-    rez = clusterSingleBatches(rez);
 catch % lower the threshold for spike detection !
     ops.spkTh           = -5;      % spike threshold in standard deviations (-6)
     % preprocess data to create temp_wh.dat
@@ -69,16 +65,20 @@ catch % lower the threshold for spike detection !
     colorbar()
     title(sprintf('Whitening matrix %s %s', BATID, Date))
     saveas(gcf, fullfile(rootZ,'WhiteningMatrix'),'epsc')
-    
-    % time-reordering as a function of drift
-    rez = clusterSingleBatches(rez);
 end
+
+% time-reordering as a function of drift
+rez = clusterSingleBatches(rez);
 
 % saving here is a good idea, because the rest can be resumed after loading rez
 save(fullfile(rootZ, 'rez.mat'), 'rez', '-v7.3');
 
 % main tracking and template matching algorithm
 rez = learnAndSolve8b(rez);
+
+% OPTIONAL: remove double-counted spikes - solves issue in which individual spikes are assigned to multiple templates.
+% See issue 29: https://github.com/MouseLand/Kilosort/issues/29
+rez = remove_ks2_duplicate_spikes(rez);
 
 % final merges
 rez = find_merges(rez, 1);
