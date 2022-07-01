@@ -1,3 +1,4 @@
+% BUG with # channels, hard code the number of leectrodes line 421-423
 
 
 classdef ksGUI < handle
@@ -410,7 +411,7 @@ classdef ksGUI < handle
         end
         
         function initPars(obj)
-            
+            NChannels = 7;
             % get ops
             obj.ops = ksGUI.defaultOps();  
             
@@ -418,9 +419,9 @@ classdef ksGUI < handle
             obj.P.tWin = [0 0.1];
             obj.P.currY = 0;
             obj.P.currX = 0;
-            obj.P.nChanToPlot = 16;
-            obj.P.nChanToPlotCM = 16;
-            obj.P.selChans = 1:16;            
+            obj.P.nChanToPlot = NChannels;
+            obj.P.nChanToPlotCM = NChannels;
+            obj.P.selChans = 1:NChannels;            
             obj.P.vScale = 0.005;
             obj.P.dataGood = false;
             obj.P.probeGood = false;            
